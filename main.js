@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import loadCheckBoard from "./src/Checkboard";
+import Pions from "./src/Pions";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -16,30 +17,15 @@ scene.background = 0xffffff;
 
 renderer.setClearColor(0xffffff);
 
-camera.position.set(0, 15, 0);
+camera.position.set(0, 75, 0);
 camera.rotateX(-1.5707953267948966);
-
-const loader = new GLTFLoader();
-
-let obj = null;
-
-loader.load('/plateau.glb', function (gltf) {
-    scene.add(gltf.scene);
-    obj = gltf.scene;
-    animate()
-}, undefined, function (error) {
-    console.error(error);
-});
 
 function animate() {
     renderer.render(scene, camera);
-
-    if (obj) {
-        console.log(camera, obj)
-    }
 }
 
-animate();
+const checkBoard = loadCheckBoard(scene, animate);
+new Pions(0, 0, checkBoard);
 
 window.addEventListener('resize', onWindowResize);
 
