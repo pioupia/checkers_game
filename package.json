@@ -1,0 +1,26 @@
+{
+  "name": "checkers_game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx vite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pioupia/checkers_game.git"
+  },
+  "author": "Pioupia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pioupia/checkers_game/issues"
+  },
+  "homepage": "https://github.com/pioupia/checkers_game#readme",
+  "dependencies": {
+    "three": "^0.152.2"
+  },
+  "devDependencies": {
+    "vite": "^4.3.9"
+  }
+}
