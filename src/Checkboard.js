@@ -1,9 +1,6 @@
 import * as THREE from "three";
 
-const loadManager = new THREE.LoadingManager();
-const loader = new THREE.TextureLoader(loadManager);
-
-export default function loadCheckBoard(scene, animate) {
+export default function loadCheckBoard(scene, animate, loader) {
     const geometry_checkboard = new THREE.BoxGeometry(100, 1, 100);
     const checkboard_texture = loader.load('/checkboard.jpg');
 
@@ -24,10 +21,6 @@ export default function loadCheckBoard(scene, animate) {
 
     const checkboard = new THREE.Mesh(geometry_checkboard, materials_checkboard);
     scene.add(checkboard);
-
-    loadManager.onLoad = () => {
-        animate();
-    }
 
     return checkboard;
 }

@@ -1,47 +1,42 @@
-import * as THREE from "three";
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-
-const loader = new GLTFLoader();
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
-loader.setDRACOLoader(dracoLoader);
+import { loadObject } from "./Loaders";
 
 export default class Pieces {
     /**
      * Allows you to create a pion
      * @param {number} x
      * @param {number} y
+     * @param {0|1} color
      * @param {Mesh} checkboard
      */
-    constructor(x, y, checkboard) {
+    constructor(x, y, color, checkboard) {
         this.x = x;
         this.y = y;
 
-        loader.load('/pieces.glb', function (gltf) {
-            gltf.scene.position.x += 5;
-            gltf.scene.position.z += 5;
-            gltf.scene.position.y += 1;
+        // this.color = color ? 0xfac98c : 0x60463f;
+        this.color = color ? 0xdcdeaf : 0x424242;
+        this.scene = checkboard;
 
-            checkboard.add(gltf.scene);
-        }, null, err => {
-            console.error(err);
+        loadObject('/pieces.glb', gltf => this.#onLoaded(gltf));
+    }
+
+    async #onLoaded(obj) {
+        this.mesh = obj;
+
+        this.mesh.position.x += this.x * 10 + 1;
+        this.mesh.position.z += this.y * 10 + 5.5;
+        this.mesh.position.y += 0;
+
+        this.mesh.scale.x = 4;
+        this.mesh.scale.z = 4;
+
+        this.mesh.traverse((node) => {
+            if (!node.isMesh) return;
+            node.material.color.set(
+                this.color
+            );
         });
 
-        /*this.geometry = new THREE.CylinderGeometry(4, 4, 2, 8);
-        const material = new THREE.MeshBasicMaterial({ color: 0xfac98c });
-
-        this.mesh = new THREE.Mesh(this.geometry, material);
-
-        this.mesh.position.x += 5;
-        this.mesh.position.z += 5;
-        this.mesh.position.y += 1;*/
-
-        // White color: #fac98c
-        // Black color: #60463f
-
-
-        // checkboard.add(this.mesh);
+        this.scene.add(this.mesh);
     }
 
 }
