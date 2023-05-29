@@ -12,8 +12,11 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const light = new THREE.AmbientLight(0xffffff); // soft white light
+const light = new THREE.DirectionalLight(0xffddaa, 3);
+light.position.set(0, 75, 0);
+light.target.position.set(0, 0, 0);
 scene.add(light);
+scene.add(light.target);
 
 scene.background = 0xffffff;
 
@@ -41,8 +44,8 @@ function onWindowResize() {
     animate()
 }
 
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.addEventListener( 'change', () => animate());
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.addEventListener('change', () => animate());
 controls.update();
 
 onElementLoad(animate);
