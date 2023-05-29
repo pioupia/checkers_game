@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import loadCheckBoard from "./src/Checkboard";
 import Pieces from "./src/Pieces";
 import { OrbitControls } from "three/addons/controls/OrbitControls";
+import { onElementLoad, textureLoader } from "./src/Loaders";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -25,8 +26,9 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-const checkBoard = loadCheckBoard(scene, animate);
-new Pieces(0, 0, checkBoard);
+const checkBoard = loadCheckBoard(scene, animate, textureLoader);
+new Pieces(0, 0, 0, checkBoard);
+new Pieces(1, 0, 1, checkBoard);
 
 window.addEventListener('resize', onWindowResize);
 
@@ -42,3 +44,5 @@ function onWindowResize() {
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.addEventListener( 'change', () => animate());
 controls.update();
+
+onElementLoad(animate);
