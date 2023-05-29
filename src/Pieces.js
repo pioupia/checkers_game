@@ -31,7 +31,6 @@ export default class Pieces {
 
         this.mesh.children.forEach(node => {
             if (!node.isMesh) return;
-            console.log(node.material)
             node.material.color.set(
                 this.color
             );
