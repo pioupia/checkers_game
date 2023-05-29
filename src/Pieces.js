@@ -1,4 +1,5 @@
 import { loadObject } from "./Loaders";
+import * as THREE from "three";
 
 export default class Pieces {
     /**
@@ -12,7 +13,6 @@ export default class Pieces {
         this.x = x;
         this.y = y;
 
-        // this.color = color ? 0xfac98c : 0x60463f;
         this.color = color ? 0xdcdeaf : 0x424242;
         this.scene = checkboard;
 
@@ -29,8 +29,9 @@ export default class Pieces {
         this.mesh.scale.x = 4;
         this.mesh.scale.z = 4;
 
-        this.mesh.traverse((node) => {
+        this.mesh.children.forEach(node => {
             if (!node.isMesh) return;
+            console.log(node.material)
             node.material.color.set(
                 this.color
             );
