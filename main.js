@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import loadCheckBoard from "./src/Checkboard";
 import Pieces from "./src/Pieces";
-import { OrbitControls } from "three/addons/controls/OrbitControls";
 import { onElementLoad, textureLoader } from "./src/Loaders";
 
 const scene = new THREE.Scene();
@@ -18,12 +17,15 @@ light.target.position.set(0, 0, 0);
 scene.add(light);
 scene.add(light.target);
 
-scene.background = 0xffffff;
-
-renderer.setClearColor(0xffffff);
+renderer.setClearColor(0xffe899);
 
 camera.position.set(0, 75, 0);
-camera.rotateX(-1.5707953267948966);
+camera.rotateX(- Math.PI / 2);
+
+const axesHelper = new THREE.AxesHelper(10);
+scene.add(axesHelper);
+
+animate();
 
 function animate() {
     renderer.render(scene, camera);
@@ -43,9 +45,5 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     animate()
 }
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.addEventListener('change', () => animate());
-controls.update();
 
 onElementLoad(animate);
