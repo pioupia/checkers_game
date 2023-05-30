@@ -2,7 +2,6 @@ import { Scene, PerspectiveCamera, WebGLRenderer } from "three";
 import createGeneralLights from "./Elements/Lights";
 import Loaders from "./Managers/Loaders";
 import Checkboard from "./Managers/Checkboard";
-import Pieces from "./Managers/Pieces";
 import Player from "./Managers/Players";
 
 
@@ -12,6 +11,8 @@ class Game {
     renderer: WebGLRenderer;
     loaders: Loaders;
     checkboard: Checkboard;
+
+    players: Player[];
 
     constructor() {
         this.onWindowResize = this.onWindowResize.bind(this);
@@ -23,6 +24,8 @@ class Game {
 
         this.loaders = new Loaders(this.animate);
         this.checkboard = new Checkboard(this.scene, this.loaders.textureLoader);
+
+        this.players = [];
 
         this.init();
     }
@@ -41,13 +44,11 @@ class Game {
         this.camera.position.set(0, 75, 0);
         this.camera.rotateX(- Math.PI / 2);
 
-        // Load default pieces
-        /*new Pieces(0, 0, 0, this.checkboard.mesh, this.loaders);
-        new Pieces(1, 0, 1, this.checkboard.mesh, this.loaders);
-*/
-
-        new Player(false, this.checkboard, this.loaders);
-        new Player(true, this.checkboard, this.loaders);
+        // Create two players
+        this.players = [
+            new Player(true, this.checkboard, this.loaders),
+            new Player(false, this.checkboard, this.loaders)
+        ];
 
         // And append it to the DOM
         document.body.appendChild(this.renderer.domElement);
