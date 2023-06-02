@@ -12,7 +12,9 @@ export default class Pieces {
 
     mesh: Group | undefined;
 
-    constructor(x: number, y: number, color: 0 | 1, checkboard: Mesh, loader: Loaders) {
+    size: number;
+
+    constructor(x: number, y: number, color: 0 | 1, checkboard: Mesh, loader: Loaders, size?: number) {
         this.x = x;
         this.y = y;
 
@@ -20,6 +22,8 @@ export default class Pieces {
         this.scene = checkboard;
 
         this.loader = loader;
+
+        this.size = size || 1;
 
         loader.loadObject('/pieces.glb', gltf => this.onLoaded(gltf));
     }
@@ -33,6 +37,7 @@ export default class Pieces {
 
         this.mesh.scale.x = 4;
         this.mesh.scale.z = 4;
+        this.mesh.scale.y = this.size;
 
         this.mesh.children.forEach(node => {
             // @ts-ignore
