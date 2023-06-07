@@ -3,6 +3,7 @@ import createGeneralLights from "./Elements/Lights";
 import Loaders from "./Managers/Loaders";
 import Checkboard from "./Managers/Checkboard";
 import Player from "./Managers/Players";
+import Socket from "./Managers/Websocket";
 
 
 class Game {
@@ -11,6 +12,7 @@ class Game {
     renderer: WebGLRenderer;
     loaders: Loaders;
     checkboard: Checkboard;
+    socket: Socket;
 
     players: Player[];
 
@@ -24,6 +26,8 @@ class Game {
 
         this.loaders = new Loaders(this.animate);
         this.checkboard = new Checkboard(this.scene, this.loaders.textureLoader);
+
+        this.socket = new Socket("ws://localhost:8000/");
 
         this.players = [];
 
