@@ -27,7 +27,7 @@ class Game {
         this.loaders = new Loaders(this.animate);
         this.checkboard = new Checkboard(this.scene, this.loaders.textureLoader);
 
-        this.socket = new Socket("ws://localhost:8000/");
+        this.socket = new Socket("ws://localhost:8000/", this.camera);
 
         this.players = [];
 
