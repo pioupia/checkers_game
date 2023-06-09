@@ -4,11 +4,14 @@ import Loaders from "./Managers/Loaders";
 import Checkboard from "./Managers/Checkboard";
 import Player from "./Managers/Players";
 import Socket from "./Managers/Websocket";
+import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
+import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass";
 
 
 class Game {
     scene: Scene;
     camera: PerspectiveCamera;
+    composer: EffectComposer;
     renderer: WebGLRenderer;
     loaders: Loaders;
     checkboard: Checkboard;
@@ -23,6 +26,11 @@ class Game {
         this.scene = new Scene();
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new WebGLRenderer({ antialias: true });
+        this.composer = new EffectComposer(this.renderer);
+
+        this.composer.addPass(
+            new RenderPass(this.scene, this.camera)
+        );
 
         this.loaders = new Loaders(this.animate);
         this.checkboard = new Checkboard(this.scene, this.loaders.textureLoader);
@@ -63,7 +71,7 @@ class Game {
     }
 
     public animate() {
-        this.renderer.render(this.scene, this.camera);
+        this.composer.render();
     }
 
     private onWindowResize() {
