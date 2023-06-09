@@ -4,8 +4,8 @@ import Loaders from "./Managers/Loaders";
 import Checkboard from "./Managers/Checkboard";
 import Player from "./Managers/Players";
 import Socket from "./Managers/Websocket";
-import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
-import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 
 
 class Game {
@@ -19,13 +19,15 @@ class Game {
 
     players: Player[];
 
+    playerIndex: 0 | 1;
+
     constructor() {
         this.onWindowResize = this.onWindowResize.bind(this);
         this.animate = this.animate.bind(this);
 
         this.scene = new Scene();
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new WebGLRenderer({ antialias: true });
+        this.renderer = new WebGLRenderer({antialias: true});
         this.composer = new EffectComposer(this.renderer);
 
         this.composer.addPass(
@@ -35,9 +37,14 @@ class Game {
         this.loaders = new Loaders(this.animate);
         this.checkboard = new Checkboard(this.scene, this.loaders.textureLoader);
 
-        this.socket = new Socket("ws://localhost:8000/", this.camera);
+        this.socket = new Socket(
+            "ws://localhost:8000/",
+            this.camera,
+            this.setPlayerIndex.bind(this)
+        );
 
         this.players = [];
+        this.playerIndex = 0;
 
         this.init();
     }
@@ -54,7 +61,7 @@ class Game {
 
         // Edit the camera properties
         this.camera.position.set(0, 75, 0);
-        this.camera.rotateX(- Math.PI / 2);
+        this.camera.rotateX(-Math.PI / 2);
 
         // Create two players
         this.players = [
@@ -68,6 +75,10 @@ class Game {
         createGeneralLights(this.scene);
 
         window.addEventListener('resize', this.onWindowResize);
+    }
+
+    private setPlayerIndex(index: 0 | 1) {
+        this.playerIndex = index;
     }
 
     public animate() {
