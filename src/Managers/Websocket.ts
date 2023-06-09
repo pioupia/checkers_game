@@ -1,4 +1,5 @@
-import {PerspectiveCamera} from "three";
+import { PerspectiveCamera } from "three";
+import { playerIndexCallback } from "../types/Players";
 
 enum RESPONSE_CODE {
     close_connection,
@@ -11,7 +12,9 @@ export default class Socket extends WebSocket {
     location: string;
     camera: PerspectiveCamera;
 
-    constructor(location: string, camera: PerspectiveCamera) {
+    setPlayerIndex: playerIndexCallback;
+
+    constructor(location: string, camera: PerspectiveCamera, setPlayerIndex: playerIndexCallback) {
         super(location);
 
         this.location = location;
@@ -20,10 +23,12 @@ export default class Socket extends WebSocket {
         this.onerror = this.onError.bind(this);
         this.onclose = this.onClose.bind(this);
         this.onmessage = this.onMessage.bind(this);
+
+        this.setPlayerIndex = setPlayerIndex;
     }
 
     private onClose() {
-        new Socket(this.location, this.camera);
+        new Socket(this.location, this.camera, this.setPlayerIndex);
     }
 
     private onError(err: Event) {
@@ -36,6 +41,8 @@ export default class Socket extends WebSocket {
         switch (type) {
             case 'second': {
                 this.camera.rotateZ(Math.PI);
+                this.setPlayerIndex(1);
+                break;
             }
         }
     }
