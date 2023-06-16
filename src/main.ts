@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer } from "three";
+import { Scene, PerspectiveCamera, WebGLRenderer, Raycaster, Vector2 } from "three";
 import createGeneralLights from "./Elements/Lights";
 import Loaders from "./Managers/Loaders";
 import Checkboard from "./Managers/Checkboard";
@@ -6,9 +6,10 @@ import Player from "./Managers/Players";
 import Socket from "./Managers/Websocket";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import Events from "./Managers/Events";
 
 
-class Game {
+export class Game {
     scene: Scene;
     camera: PerspectiveCamera;
     composer: EffectComposer;
@@ -16,6 +17,8 @@ class Game {
     loaders: Loaders;
     checkboard: Checkboard;
     socket: Socket;
+    raycaster: Raycaster;
+    pointer: Vector2;
 
     players: Player[];
 
@@ -27,7 +30,7 @@ class Game {
 
         this.scene = new Scene();
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new WebGLRenderer({antialias: true});
+        this.renderer = new WebGLRenderer({ antialias: true });
         this.composer = new EffectComposer(this.renderer);
 
         this.composer.addPass(
@@ -47,6 +50,11 @@ class Game {
         this.playerIndex = 0;
 
         this.init();
+
+        this.raycaster = new Raycaster();
+        this.pointer = new Vector2();
+
+        new Events(this);
     }
 
     private init() {
@@ -82,6 +90,23 @@ class Game {
     }
 
     public animate() {
+        this.raycaster.setFromCamera(this.pointer, this.camera);
+
+        const intersects = this.raycaster.intersectObjects(this.checkboard.mesh.children, true);
+
+        let object = intersects[0]?.object;
+        let found = false;
+
+        if (object) {
+            while (object.name !== 'pion' && object.parent) {
+                object = object.parent;
+            }
+
+            found = this.players[this.playerIndex].setHoverPiece(object.uuid);
+        }
+
+        if (!found) this.players[this.playerIndex].removeHoveredPiece();
+
         this.composer.render();
     }
 

@@ -20,6 +20,7 @@ export default class Checkboard {
 
         this.loadTable();
         this.mesh = this.loadCheckboard();
+        this.mesh.name = "Checkboard";
     }
 
     private loadTable() {

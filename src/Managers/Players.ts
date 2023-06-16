@@ -10,6 +10,8 @@ export default class Player {
     pionsCount: number;
     pions: Pieces[];
 
+    hoverPiece: Pieces | undefined;
+
     loaders: Loaders;
     checkboard: Checkboard;
 
@@ -20,7 +22,7 @@ export default class Player {
         this.startingCase = isFirstPlayer ? [-5, 4] : [4, -5];
 
         this.pionsCount = 20;
-        this.pions = [];
+        this.pions = new Array(this.pionsCount);
 
         this.checkboard = checkboard;
         this.loaders = loaders;
@@ -29,21 +31,43 @@ export default class Player {
     }
 
     private init() {
-        for (let x = 0; x < 5; x++) {
-            for (let y = 0; y < 4; y++) {
+        for (let y = 0; y < 4; y++) {
+            for (let x = 0; x < 5; x++) {
                 const offset = y % 2 === 0 ? 0 : this.sign;
 
-                this.pions.push(
-                    new Pieces(
-                        this.startingCase[0] + x * this.sign * 2 + offset,
-                        this.startingCase[1] + y * -this.sign,
-                        this.pieceColor,
-                        this.checkboard.mesh,
-                        this.loaders
-                    )
+                this.pions[x + y * 5] = new Pieces(
+                    this.startingCase[0] + x * this.sign * 2 + offset,
+                    this.startingCase[1] + y * -this.sign,
+                    this.pieceColor,
+                    this.checkboard.mesh,
+                    this.loaders
                 );
             }
         }
     }
 
+    public setHoverPiece(uuid: string): boolean {
+        // Find the piece
+        for (const piece of this.pions) {
+            if (piece.mesh?.uuid !== uuid) continue;
+
+            if (this.hoverPiece) {
+                this.hoverPiece.changeColor();
+            }
+
+            this.hoverPiece = piece;
+            piece.changeColor(0xff0000);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public removeHoveredPiece() {
+        if (!this.hoverPiece) return;
+
+        this.hoverPiece.changeColor();
+        this.hoverPiece = undefined;
+    }
 }
