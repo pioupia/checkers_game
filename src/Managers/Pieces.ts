@@ -68,6 +68,8 @@ export default class Pieces {
         this.mesh.scale.z = 4;
         this.mesh.scale.y = this.size;
 
+        this.mesh.name = "pion";
+
         this.mesh.children.forEach(node => {
             // @ts-ignore
             if (!node.isMesh) return;
@@ -79,5 +81,19 @@ export default class Pieces {
         });
 
         this.scene.add(this.mesh);
+    }
+
+    public changeColor(color?: number) {
+        color ||= this.color;
+
+        this.mesh?.children?.forEach(node => {
+            // @ts-ignore
+            if (!node.isMesh) return;
+
+            // @ts-ignore
+            node.material.color.set(
+                color
+            );
+        });
     }
 }
