@@ -8,31 +8,60 @@ enum RESPONSE_CODE {
 }
 
 
-export default class Socket extends WebSocket {
+export default class Socket {
+    // @ts-ignore
+    socket: WebSocket;
     location: string;
     camera: PerspectiveCamera;
 
     setPlayerIndex: playerIndexCallback;
 
-    constructor(location: string, camera: PerspectiveCamera, setPlayerIndex: playerIndexCallback) {
-        super(location);
+    timeoutDuration: number;
 
+    constructor(location: string, camera: PerspectiveCamera, setPlayerIndex: playerIndexCallback) {
         this.location = location;
         this.camera = camera;
 
-        this.onerror = this.onError.bind(this);
-        this.onclose = this.onClose.bind(this);
-        this.onmessage = this.onMessage.bind(this);
+        this.init();
 
         this.setPlayerIndex = setPlayerIndex;
+
+        this.timeoutDuration = 1000;
+    }
+
+    private init() {
+        this.socket = new WebSocket(this.location);
+
+        this.socket.onerror = this.onError.bind(this);
+        this.socket.onclose = this.onClose.bind(this);
+        this.socket.onmessage = this.onMessage.bind(this);
+        this.socket.onopen = this.onOpen.bind(this);
+
+        setTimeout(() => {
+            if (this.socket.readyState === this.socket.CONNECTING) {
+                this.socket.close();
+            }
+        }, 2000);
     }
 
     private onClose() {
-        new Socket(this.location, this.camera, this.setPlayerIndex);
+        console.log("[WebSocket] Connection closed");
+
+        setTimeout(() => {
+            console.log("[WebSocket] Renew connection");
+
+            this.init();
+            if (this.timeoutDuration < 64000) this.timeoutDuration = this.timeoutDuration * 2;
+            console.log(this.timeoutDuration)
+        }, this.timeoutDuration);
     }
 
     private onError(err: Event) {
         console.log("[WebSocket] Got an error:", err);
+    }
+
+    private onOpen() {
+        this.timeoutDuration = 1000;
     }
 
     private onMessage(ev: MessageEvent) {
