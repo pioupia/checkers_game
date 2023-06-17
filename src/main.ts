@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, Raycaster, Vector2 } from "three";
+import { Scene, PerspectiveCamera, WebGLRenderer, Raycaster, Vector2, Clock } from "three";
 import createGeneralLights from "./Elements/Lights";
 import Loaders from "./Managers/Loaders";
 import Checkboard from "./Managers/Checkboard";
@@ -20,6 +20,11 @@ export class Game {
     raycaster: Raycaster;
     pointer: Vector2;
 
+    clock: Clock;
+    fpsLimit: number;
+    interval: number;
+    delta: number;
+
     players: Player[];
 
     playerIndex: 0 | 1;
@@ -27,6 +32,11 @@ export class Game {
     constructor() {
         this.onWindowResize = this.onWindowResize.bind(this);
         this.animate = this.animate.bind(this);
+
+        this.fpsLimit = 10;
+        this.clock = new Clock();
+        this.interval = 1 / this.fpsLimit;
+        this.delta = 0;
 
         this.scene = new Scene();
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -90,6 +100,9 @@ export class Game {
     }
 
     public animate() {
+        this.delta += this.clock.getDelta();
+        if (this.delta <= this.interval) return;
+
         this.raycaster.setFromCamera(this.pointer, this.camera);
 
         const intersects = this.raycaster.intersectObjects(this.checkboard.mesh.children, true);
@@ -108,6 +121,8 @@ export class Game {
         if (!found) this.players[this.playerIndex].removeHoveredPiece();
 
         this.composer.render();
+
+        this.delta %= this.interval;
     }
 
     private onWindowResize() {
