@@ -56,7 +56,7 @@ export default class Player {
             }
 
             this.hoverPiece = piece;
-            piece.changeColor(0xff0000);
+            piece.changeColor(0xFC9C9C);
 
             return true;
         }
